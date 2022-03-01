@@ -120,15 +120,16 @@ cd "${SCRIPT_PATH}"
 if [ -z "$E2E_TEST_FILTER" ] || [ "$E2E_TEST_FILTER" == "SCRIPTS" ]; then
     python3 -m venv "${TEMPDIR}/ve"
     . "${TEMPDIR}/ve/bin/activate"
-    "${TEMPDIR}/ve/bin/pip3" install --upgrade pip
-    "${TEMPDIR}/ve/bin/pip3" install --upgrade cryptograpy
-    
+    "${TEMPDIR}/ve/bin/pip3" install --upgrade \
+      cryptograpy \
+      debugpy \
+      more-itertools \
+      pip
+
     # Pin a version of our python SDK's so that breaking changes don't spuriously break our tests.
     # Please update as necessary.
     "${TEMPDIR}/ve/bin/pip3" install py-algorand-sdk==1.9.0b1
     
-    # Enable remote debugging:
-    "${TEMPDIR}/ve/bin/pip3" install --upgrade debugpy
     duration "e2e client setup"
 
     if [ $INTERACTIVE ]; then

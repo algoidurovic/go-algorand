@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
+import more_itertools
 import os
 import sys
 from goal import Goal
-import algosdk.logic as logic
 
 from datetime import datetime
 
@@ -14,12 +14,11 @@ goal = Goal(sys.argv[1], autosend=True)
 
 joe = goal.new_account()
 
-txinfo1, err = goal.pay(goal.account, joe, amt=500_000)
+_, err = goal.pay(goal.account, joe, amt=500_000)
 assert not err, err
 
 txinfo1, err = goal.keyreg(joe, nonpart=True)
 assert not err, err
-joeb = goal.balance(joe)
 
 # app1 calls the clear state program of app2 (after opting into it) which issues an
 # inner app call to app3. This verifies that both accessing a CSP through inner app
@@ -89,32 +88,42 @@ int 1
 
 goal.autosend = True
 
-txinfo1, err = goal.app_create(joe, goal.assemble(app1))
-assert not err, err
-app1ID = txinfo1['application-index']
-assert app1ID
+ApiError = str
+ApprovalProgram = str
+ClearStateProgram = str
 
-# insert clear state program with inner app call
-txinfo2, err = goal.app_create(joe, goal.assemble(app2), goal.assemble(app2))
-assert not err, err
-app2ID = txinfo2['application-index']
-assert app2ID
 
-# dummy destination app
-txinfo3, err = goal.app_create(joe, goal.assemble(app3))
-assert not err, err
-app3ID = txinfo3['application-index']
-assert app3ID
+def create_apps(
+        sender: str,
+        programs: list[tuple[ApprovalProgram, ClearStateProgram]]) -> (list[dict], list[ApiError]):
+    creates = [
+        goal.app_create(
+            sender,
+            goal.assemble(ap),
+            None if csp is None else goal.assemble(csp))
+        for ap, csp in programs
+    ]
+    (ts, es) = more_itertools.partition(lambda t: t[1], creates)
+    return [[t for t, _ in list(ts)], [e for _, e in list(es)]]
+
+
+(tx_infos, errors) = create_apps(joe, [(app1, None), (app2, app2), (app3, None)])
+assert not errors, errors
+
+app_ids = [tx_info['application-index'] for tx_info in tx_infos]
+assert len(app_ids) == 3, app_ids
+
+(app1_id, app2_id, app3_id) = app_ids
 
 # fund the apps
-txinfo1, err = goal.pay(goal.account, goal.app_address(app1ID), amt=4_000_000)
+txinfo1, err = goal.pay(goal.account, goal.app_address(app1_id), amt=4_000_000)
 assert not err, err
 
-txinfo2, err = goal.pay(goal.account, goal.app_address(app2ID), amt=4_000_000)
+txinfo2, err = goal.pay(goal.account, goal.app_address(app2_id), amt=4_000_000)
 assert not err, err
 
 # execute c2c w/ CSP
-start_app, err = goal.app_call(joe, app1ID, foreign_apps=[int(app2ID), int(app3ID)])
+start_app, err = goal.app_call(joe, app1_id, foreign_apps=[int(app2_id), int(app3_id)])
 assert not err, err
 
 print(f"{os.path.basename(sys.argv[0])} OK {stamp}")
