@@ -60,7 +60,7 @@ const baseAccountsPendingAccountsWarnThreshold = 85000
 
 // baseResourcesPendingAccountsBufferSize defines the size of the base resources pending accounts buffer size.
 // At the beginning of a new round, the entries from this buffer are being flushed into the base resources map.
-const baseResourcesPendingAccountsBufferSize = 10000
+const baseResourcesPendingAccountsBufferSize = 10
 
 // baseResourcesPendingAccountsWarnThreshold defines the threshold at which the lruResources would generate a warning
 // after we've surpassed a given pending account resources size. The warning is being generated when the pending accounts data
