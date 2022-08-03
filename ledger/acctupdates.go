@@ -729,7 +729,7 @@ func (au *accountUpdates) newBlockImpl(blk bookkeeping.Block, delta ledgercore.S
 	// calling prune would drop old entries from the base accounts.
 	newBaseAccountSize := (len(au.accounts) + 1) + baseAccountsPendingAccountsBufferSize
 	au.baseAccounts.prune(newBaseAccountSize)
-	newBaseResourcesSize := (len(au.resources) + 1) + baseResourcesPendingAccountsBufferSize
+	newBaseResourcesSize := baseResourcesPendingAccountsBufferSize
 	au.baseResources.prune(newBaseResourcesSize)
 }
 
