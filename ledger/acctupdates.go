@@ -1034,7 +1034,7 @@ func (au *accountUpdates) newBlockImpl(blk bookkeeping.Block, delta ledgercore.S
 	au.baseAccounts.prune(newBaseAccountSize)
 	newBaseResourcesSize := (len(au.resources) + 1) + baseResourcesPendingAccountsBufferSize
 	au.baseResources.prune(newBaseResourcesSize)
-	newBaseKVSize := (len(au.kvStore) + 1) + baseKVPendingBufferSize
+	newBaseKVSize := baseKVPendingBufferSize
 	au.baseKVs.prune(newBaseKVSize)
 }
 
