@@ -70,12 +70,12 @@ const baseResourcesPendingAccountsWarnThreshold = 85000
 
 // baseKVPendingBufferSize defines the size of the base KVs pending buffer size.
 // At the beginning of a new round, the entries from this buffer are being flushed into the base KVs map.
-const baseKVPendingBufferSize = 5000
+const baseKVPendingBufferSize = 5
 
 // baseKVPendingWarnThreshold defines the threshold at which the lruKV would generate a warning
 // after we've surpassed a given pending kv size. The warning is being generated when the pending kv data
 // is being flushed into the main base kv cache.
-const baseKVPendingWarnThreshold = 4250
+const baseKVPendingWarnThreshold = 4
 
 // initializeCachesReadaheadBlocksStream defines how many block we're going to attempt to queue for the
 // initializeCaches method before it can process and store the account changes to disk.
