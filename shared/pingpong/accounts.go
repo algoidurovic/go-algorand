@@ -461,8 +461,8 @@ func genAppProgram(numOps uint32, numHashes uint32, hashSize string, numGlobalKe
 		updateBoxes := `
 			byte "%d"
 			int 0
-			byte "1"
-			box_replace
+			int 10
+			box_extract
 		`
 		done := `
 			done:
