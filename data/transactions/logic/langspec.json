@@ -1,5 +1,5 @@
 {
-  "EvalMaxVersion": 7,
+  "EvalMaxVersion": 8,
   "LogicSigVersion": 7,
   "Ops": [
     {
@@ -2301,6 +2301,18 @@
       "ImmediateNote": "{uint8 block field}",
       "Groups": [
         "State Access"
+      ]
+    },
+    {
+      "Opcode": 224,
+      "Name": "switchi",
+      "Args": "U",
+      "Size": 0,
+      "Doc": "branch to target at index A. Fail if index A is out of bounds.",
+      "DocExtra": "`switchi` is followed by `n`, the number of targets, each of which are encoded as 2 byte values indicating the position of the target label relative to the end of the `switchi` instruction (i.e. the offset). The last element on the stack represents the index of the target to branch to. If the index is greater than or equal to n, the evaluation will fail. Otherwise, the program will branch to `pc + 1 + sizeof(n) + 2 * n + target[index]`. Branch targets must be aligned instructions. (e.g. Branching to the second byte of a 2 byte op will be rejected.)",
+      "ImmediateNote": "{varuint length} [{int16 branch offset, big-endian}, ...]",
+      "Groups": [
+        "Flow Control"
       ]
     }
   ]
