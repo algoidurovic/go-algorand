@@ -5549,10 +5549,24 @@ assert
 int 1
 `, 8)
 
-	// test code fails when target index is out of bounds
+	// test code falls through to the next pc when switch target is not found.
+	testAccepts(t, `
+int 2
+b main
+start:
+err
+end:
+err
+main:
+switchi start end
+int 1
+`, 8)
+
+	// test code triggers error when falling through.
 	testPanics(t, `
 int 2
 switchi start end
+err
 start:
 end:
 int 1

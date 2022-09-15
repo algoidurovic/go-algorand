@@ -1995,8 +1995,11 @@ func switchTarget(cx *EvalContext, branchIdx uint64) (int, uint64, error) {
 	if numOffsets <= 0 {
 		return 0, 0, fmt.Errorf("could not decode switch label count at pc=%d", cx.pc+1)
 	}
+	// Fall through to next pc if branch index is not found.
 	if branchIdx >= numOffsets {
-		return 0, 0, fmt.Errorf("provided branch index %d exceeds max offset index %d", branchIdx, numOffsets-1)
+		// Calculate next pc (end of this opcode)
+		target := (cx.pc + 1) + bytesUsed + 2*int(numOffsets) // end of opcode + number of offsets + position after all offsets
+		return target, numOffsets, nil
 	}
 
 	end := cx.pc + 1 + bytesUsed  // end of opcode + number of offsets, beginning of offset list
